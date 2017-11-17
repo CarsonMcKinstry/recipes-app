@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "babel-node index.js",
-    "start:dev": "nodemon index.js --exec babel-node"
+    "start:dev": "nodemon --exec babel-node index.js"
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
