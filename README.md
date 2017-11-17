@@ -1,0 +1,2 @@
+# Express/Mongo Authentication Boilerplate
+
