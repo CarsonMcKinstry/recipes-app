@@ -2,6 +2,10 @@ import mongoose, { Schema } from "mongoose";
 import { hashSync, compareSync, genSaltSync } from "bcrypt-nodejs";
 
 const userSchema = new Schema({
+  name: {
+    firstName: String,
+    lastName: String
+  },
   email: { type: String, unique: true, lowercase: true },
   password: String
 });
