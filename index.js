@@ -1,19 +1,19 @@
 // Server gen
 import express from "express";
 import { createServer } from "http";
-import router from "./routes/";
+import router from "./src/routes/";
 
 // Basic middleware
 import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import passport from "passport";
-import passportConfig from "./config/passport";
+import passportConfig from "./src/config/passport";
 
 // mongodb interfacing
 import mongoose from "mongoose";
 import bluebird from "bluebird";
-import dbUrl from "./config/database";
+import dbUrl from "./src/config/database";
 
 mongoose.Promise = bluebird;
 mongoose.connect(dbUrl, { useMongoClient: true }, err => {

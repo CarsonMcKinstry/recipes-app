@@ -25,7 +25,9 @@ const recipeSchema = new Schema({
       rating: Number
     }
   ],
-  averageRating: Number
+  averageRating: Number,
+  displayImage: String,
+  keywords: [String]
 });
 
 export default mongoose.model("Recipe", recipeSchema);

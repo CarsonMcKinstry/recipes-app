@@ -1,24 +1,24 @@
 import User from "../models/user";
 import { encode as encodeJwt } from "jwt-simple";
-import { pick, get } from "lodash";
+import { pick, get, pipe } from "lodash/fp";
 import validator from "validator";
 
 const jwtSecret = process.env.JWT_SECRET;
 
 const tokenFromUser = user => {
-  const payload = {};
-
-  payload.email = get(user, "email");
-  payload._id = get(user, "_id");
-
+  const payload = pick(["email", "screenName", "_id"])(user);
   return encodeJwt(payload, jwtSecret);
 };
 
 export const registerUser = (req, res, next) => {
-  const { email, password } = pick(req.body, ["email", "password"]);
+  const { email, password, screenName } = pipe([
+    get("body"),
+    pick[("email", "password", "screenName")]
+  ])(req);
 
   const trimmedEmail = validator.trim(email);
   const trimmedPassword = validator.trim(password);
+  const trimmedName = validator.trim(screenName);
 
   if (!validator.isEmail(trimmedEmail) || !trimmedEmail)
     return res.status(400).send("You must provide a valid email address");
@@ -30,9 +30,13 @@ export const registerUser = (req, res, next) => {
     return res
       .status(400)
       .send(
-        `You must provide a password longer than ${process.env
-          .PASSWORD_MIN_LENGTH} characters`
+        `You must provide a password longer than ${
+          process.env.PASSWORD_MIN_LENGTH
+        } characters`
       );
+
+  if (!trimmedName)
+    return res.status(400).send("You must provide a screen name");
 
   User.findOne({ email: trimmedEmail }, (err, foundUser) => {
     if (err) return next(err);
@@ -43,6 +47,7 @@ export const registerUser = (req, res, next) => {
 
     newUser.email = trimmedEmail;
     newUser.password = newUser.generateHash(trimmedPassword);
+    newUser.screenName = trimmedName;
 
     newUser.save((err, user) => {
       if (err) return next(err);
