@@ -3,7 +3,7 @@ import { hashSync, compareSync, genSaltSync } from "bcrypt-nodejs";
 
 const userSchema = new Schema(
   {
-    screenName: String,
+    screenName: { type: String, required: true },
     email: { type: String, unique: true, lowercase: true },
     password: String
   },

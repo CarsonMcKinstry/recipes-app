@@ -23,3 +23,13 @@ export const createRecipeSchema = {
     displayImage: Joi.string()
   }
 };
+
+export const userRegistrationSchema = {
+  body: {
+    screenName: Joi.string().required(),
+    password: Joi.string().required(),
+    email: Joi.string()
+      .email()
+      .required()
+  }
+};
