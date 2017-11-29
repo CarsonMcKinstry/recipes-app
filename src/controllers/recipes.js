@@ -5,13 +5,16 @@ import {
   pipe,
   get,
   kebabCase,
-  // length,
-  // isArray,
+  isArray,
+  isString,
+  isNumber,
   trim,
-  // every,
-  map
+  every,
+  map,
+  isObject
 } from "lodash/fp";
 import keywordExtractor from "keyword-extractor";
+// import { isString } from "util";
 
 const extractorOptions = {
   language: "english",
@@ -38,18 +41,28 @@ const addToIngredientsList = ingredients => {
   });
 };
 
+const handleErrors = res => (status, message) => {
+  return res.status(status).send(message);
+};
+
 export const createRecipe = (req, res) => {
+  const errorHandler = handleErrors(res);
   const recipeFields = [
     "name",
     "requiredTime",
     "ingredients",
     "instructions",
-    "displayImage"
+    "displayImage",
+    "description"
   ];
-  const { name, requiredTime, ingredients, instructions, displayImage } = pipe([
-    get("body"),
-    pick(recipeFields)
-  ])(req);
+  const {
+    name,
+    requiredTime,
+    ingredients,
+    instructions,
+    displayImage,
+    description
+  } = pipe([get("body"), pick(recipeFields)])(req);
   const user = pipe([get("user"), parseUser])(req);
   const recipe = new Recipe({
     name: trim(name),
@@ -59,19 +72,30 @@ export const createRecipe = (req, res) => {
     ingredients,
     instructions: map(trim)(instructions),
     displayImage,
+    description,
     keywords: keywordExtractor.extract(name, extractorOptions)
   });
 
   addToIngredientsList(ingredients);
 
   recipe.save((err, recipe) => {
-    if (err) res.status(500).send();
+    if (err)
+      res.status(500).send("Something went wrong while saving your recipe");
     if (recipe) res.json(recipe);
+  });
+};
+
+export const getRecipe = (req, res) => {
+  const recipeId = get("params.recipeId")(req);
+  Recipe.findById(recipeId, (err, recipe) => {
+    if (err) res.status(500).send("Couldn't find that recipe");
+    res.json(recipe);
   });
 };
 
 export const getAllRecipes = (req, res) => {
   Recipe.find({}, (err, recipes) => {
+    if (err) res.status(500).send("Couldn't find any recipes");
     res.json(recipes);
   });
 };

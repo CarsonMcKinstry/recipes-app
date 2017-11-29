@@ -6,7 +6,7 @@ const recipeSchema = new Schema(
     normalizedName: { type: String, index: true },
     description: { type: String, maxlength: 140 },
     author: {
-      name: String,
+      screenName: String,
       _id: Schema.Types.ObjectId
     },
     requiredTime: {
