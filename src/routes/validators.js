@@ -1,6 +1,6 @@
 import { Joi } from "celebrate";
 
-export const createRecipeSchema = {
+const createRecipeSchema = {
   body: {
     name: Joi.string().required(),
     description: Joi.string(),
@@ -24,7 +24,15 @@ export const createRecipeSchema = {
   }
 };
 
-export const userRegistrationSchema = {
+const recipeQuerySchema = {
+  query: {
+    q: Joi.string(),
+    p: Joi.number(),
+    limit: Joi.number().allow([10, 25, 50])
+  }
+};
+
+const userRegistrationSchema = {
   body: {
     screenName: Joi.string().required(),
     password: Joi.string().required(),
@@ -32,4 +40,12 @@ export const userRegistrationSchema = {
       .email()
       .required()
   }
+};
+
+export const Recipes = {
+  createRecipeSchema
+};
+
+export const Users = {
+  userRegistrationSchema
 };

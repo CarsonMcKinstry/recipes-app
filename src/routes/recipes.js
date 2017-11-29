@@ -1,13 +1,13 @@
-import { createRecipe, getAllRecipes, getRecipe } from "../controllers/recipes";
+import { createRecipe, getRecipes, getRecipe } from "../controllers/recipes";
 import { requireAuth } from "../helpers/passportHelper";
 import { celebrate, Joi } from "celebrate";
-import { createRecipeSchema } from "./validators";
+import { Recipes } from "./validators";
 
 export default (app, passport) => {
   const authMiddleware = requireAuth(passport);
-  const createRecipeMiddleware = celebrate(createRecipeSchema);
+  const createRecipeMiddleware = celebrate(Recipes.createRecipeSchema);
 
   app.post("/recipes", [authMiddleware, createRecipeMiddleware], createRecipe);
-  app.get("/recipes", getAllRecipes);
+  app.get("/recipes", getRecipes);
   app.get("/recipes/:recipeId", getRecipe);
 };

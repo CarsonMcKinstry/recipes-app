@@ -79,23 +79,32 @@ export const createRecipe = (req, res) => {
   addToIngredientsList(ingredients);
 
   recipe.save((err, recipe) => {
-    if (err)
-      res.status(500).send("Something went wrong while saving your recipe");
-    if (recipe) res.json(recipe);
+    if (err || !recipe)
+      return res
+        .status(500)
+        .send("Something went wrong while saving your recipe");
+    return res.json(recipe);
   });
 };
 
 export const getRecipe = (req, res) => {
   const recipeId = get("params.recipeId")(req);
   Recipe.findById(recipeId, (err, recipe) => {
-    if (err) res.status(500).send("Couldn't find that recipe");
-    res.json(recipe);
+    if (err) return res.status(500).send("Couldn't find that recipe");
+    if (!recipe) return res.status(404).send();
+    return res.json(recipe);
   });
 };
 
-export const getAllRecipes = (req, res) => {
-  Recipe.find({}, (err, recipes) => {
-    if (err) res.status(500).send("Couldn't find any recipes");
-    res.json(recipes);
+export const getRecipes = (req, res) => {
+  Recipe.count({}, (err, total) => {
+    Recipe.find({}, (err, recipes) => {
+      if (err) return res.status(500).send("Couldn't find any recipes");
+      if (!recipes) return res.status(404);
+      res.json({
+        total,
+        recipes
+      });
+    });
   });
 };
