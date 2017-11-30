@@ -1,2 +1,1 @@
-# Express/Mongo Authentication Boilerplate
-
+# Recipes App API

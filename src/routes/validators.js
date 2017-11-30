@@ -1,4 +1,7 @@
 import { Joi } from "celebrate";
+import joiObjectId from "joi-objectid";
+
+Joi.objectId = joiObjectId(Joi);
 
 const createRecipeSchema = {
   body: {
@@ -24,6 +27,29 @@ const createRecipeSchema = {
   }
 };
 
+const editRecipeSchema = {
+  params: {
+    recipeId: Joi.objectId().required()
+  },
+  body: {
+    name: Joi.string(),
+    description: Joi.string(),
+    requiredTime: Joi.object().keys({
+      prepTime: Joi.number(),
+      cookTime: Joi.number()
+    }),
+    ingredients: Joi.array().items(
+      Joi.object().keys({
+        amount: Joi.number(),
+        measurement: Joi.string(),
+        name: Joi.string()
+      })
+    ),
+    instructions: Joi.array().items(Joi.string()),
+    displayImage: Joi.string()
+  }
+};
+
 const recipesQuerySchema = {
   query: {
     q: Joi.string(),
@@ -44,6 +70,7 @@ const userRegistrationSchema = {
 
 export const Recipes = {
   createRecipeSchema,
+  editRecipeSchema,
   recipesQuerySchema
 };
 

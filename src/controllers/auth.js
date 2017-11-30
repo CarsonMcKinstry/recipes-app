@@ -13,7 +13,7 @@ const tokenFromUser = user => {
 export const registerUser = (req, res, next) => {
   const { email, password, screenName } = pipe([
     get("body"),
-    pick[("email", "password", "screenName")]
+    pick(["email", "password", "screenName"])
   ])(req);
 
   const trimmedEmail = validator.trim(email);

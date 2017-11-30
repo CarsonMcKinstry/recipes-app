@@ -90,6 +90,46 @@ export const createRecipe = (req, res) => {
   });
 };
 
+export const editRecipe = (req, res) => {
+  const errorHandler = handleErrors(res);
+  const userId = get("user._id", req);
+  const { recipeId } = req.params;
+  const {
+    name,
+    description,
+    requiredTime,
+    ingredients,
+    instructions,
+    displayImage
+  } = req.body;
+
+  const updatedRecipe = {};
+
+  if (name) {
+    updatedRecipe.name = trim(name);
+    updatedRecipe.normalizedName = pipe([trim, kebabCase])(name);
+    updatedRecipe.keywords = keywordExtractor.extract(name, extractorOptions);
+  }
+
+  if (description) updatedRecipe.description = description;
+  if (requiredTime) updatedRecipe.requiredTime = requiredTime;
+  if (ingredients) updatedRecipe.ingredients = ingredients;
+  if (instructions) updatedRecipe.instructions = instructions;
+  if (displayImage) updatedRecipe.displayImage = displayImage;
+
+  if (ingredients) {
+    addToIngredientsList(ingredients);
+  }
+  Recipe.findByIdAndUpdate(recipeId, updatedRecipe, (err, recipe) => {
+    if (err) return res.status(500).send();
+    if (!recipe) return errorHandler(500, "Something went wrong");
+
+    return res.json({
+      success: true
+    });
+  });
+};
+
 export const getRecipe = (req, res) => {
   const recipeId = get("params.recipeId")(req);
   Recipe.findById(recipeId, (err, recipe) => {
@@ -119,5 +159,17 @@ export const getRecipes = (req, res) => {
         });
       })
       .catch(err => console.log(err));
+  });
+};
+
+export const recipeOwnershipMiddleware = (req, res, next) => {
+  const userId = get("user._id", req);
+  const { recipeId } = req.params;
+
+  Recipe.findById(recipeId).then(recipe => {
+    if (recipe.author._id.equals(userId)) {
+      return next();
+    }
+    return res.status(403).send("You may not edit someone else's recipe");
   });
 };
