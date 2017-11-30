@@ -45,16 +45,19 @@ const handleErrors = res => (status, message) => {
   return res.status(status).send(message);
 };
 
+const castQuery = req => {
+  const { q } = req.query;
+  const query = {};
+
+  if (q) {
+    query.keywords = { $in: q.split("+") };
+  }
+
+  return query;
+};
+
 export const createRecipe = (req, res) => {
   const errorHandler = handleErrors(res);
-  const recipeFields = [
-    "name",
-    "requiredTime",
-    "ingredients",
-    "instructions",
-    "displayImage",
-    "description"
-  ];
   const {
     name,
     requiredTime,
@@ -62,7 +65,7 @@ export const createRecipe = (req, res) => {
     instructions,
     displayImage,
     description
-  } = pipe([get("body"), pick(recipeFields)])(req);
+  } = get("body")(req);
   const user = pipe([get("user"), parseUser])(req);
   const recipe = new Recipe({
     name: trim(name),
@@ -97,14 +100,24 @@ export const getRecipe = (req, res) => {
 };
 
 export const getRecipes = (req, res) => {
+  const { limit, p } = req.query;
+
+  const query = castQuery(req);
+
   Recipe.count({}, (err, total) => {
-    Recipe.find({}, (err, recipes) => {
-      if (err) return res.status(500).send("Couldn't find any recipes");
-      if (!recipes) return res.status(404);
-      res.json({
-        total,
-        recipes
-      });
-    });
+    const checkPage = limit * p < total;
+
+    Recipe.find(query)
+      .skip(checkPage && limit * p)
+      .limit(limit)
+      .then(recipes => {
+        return res.json({
+          page: checkPage ? query.p + 1 : 0,
+          total,
+          returned: recipes.length,
+          recipes
+        });
+      })
+      .catch(err => console.log(err));
   });
 };

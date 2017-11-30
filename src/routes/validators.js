@@ -24,11 +24,11 @@ const createRecipeSchema = {
   }
 };
 
-const recipeQuerySchema = {
+const recipesQuerySchema = {
   query: {
     q: Joi.string(),
     p: Joi.number(),
-    limit: Joi.number().allow([10, 25, 50])
+    limit: Joi.number().valid([10, 25, 50])
   }
 };
 
@@ -43,7 +43,8 @@ const userRegistrationSchema = {
 };
 
 export const Recipes = {
-  createRecipeSchema
+  createRecipeSchema,
+  recipesQuerySchema
 };
 
 export const Users = {

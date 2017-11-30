@@ -6,8 +6,9 @@ import { Recipes } from "./validators";
 export default (app, passport) => {
   const authMiddleware = requireAuth(passport);
   const createRecipeMiddleware = celebrate(Recipes.createRecipeSchema);
+  const getRecipesMiddleware = celebrate(Recipes.recipesQuerySchema);
 
   app.post("/recipes", [authMiddleware, createRecipeMiddleware], createRecipe);
-  app.get("/recipes", getRecipes);
+  app.get("/recipes", getRecipesMiddleware, getRecipes);
   app.get("/recipes/:recipeId", getRecipe);
 };
