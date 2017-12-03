@@ -29,7 +29,15 @@ const recipeSchema = new Schema(
       required: true
     },
     instructions: { type: [{ type: String, maxlength: 300 }], required: true },
-    likes: { type: Number, default: 0 },
+    likes: {
+      type: [
+        {
+          _id: { type: Schema.ObjectId, unique: true },
+          screenName: String
+        }
+      ],
+      default: []
+    },
     views: { type: Number, default: 0 },
     ratings: [
       {

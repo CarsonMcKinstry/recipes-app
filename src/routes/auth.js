@@ -1,6 +1,6 @@
 import { registerUser, login } from "../controllers/auth";
 import { requireLogin } from "../helpers/passportHelper";
-import { celebrate, Joi, errors } from "celebrate";
+import { celebrate } from "celebrate";
 import { Users } from "./validators";
 
 export default (app, passport) => {

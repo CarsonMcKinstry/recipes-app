@@ -1,18 +1,7 @@
 import Recipe from "../models/recipe";
+import User from "../models/user";
 import Ingredient from "../models/ingredient";
-import {
-  pick,
-  pipe,
-  get,
-  kebabCase,
-  isArray,
-  isString,
-  isNumber,
-  trim,
-  every,
-  map,
-  isObject
-} from "lodash/fp";
+import { pick, pipe, get, kebabCase, trim, map } from "lodash/fp";
 import keywordExtractor from "keyword-extractor";
 // import { isString } from "util";
 
@@ -42,6 +31,8 @@ const addToIngredientsList = ingredients => {
 };
 
 const handleErrors = res => (status, message) => {
+  console.log(status);
+  console.log(message);
   return res.status(status).send(message);
 };
 
@@ -57,7 +48,6 @@ const castQuery = req => {
 };
 
 export const createRecipe = (req, res) => {
-  const errorHandler = handleErrors(res);
   const {
     name,
     requiredTime,
@@ -83,16 +73,16 @@ export const createRecipe = (req, res) => {
 
   recipe.save((err, recipe) => {
     if (err || !recipe)
-      return res
-        .status(500)
-        .send("Something went wrong while saving your recipe");
+      return handleErrors(res)(
+        500,
+        "Something went wrong while saving your recipe"
+      );
     return res.json(recipe);
   });
 };
 
 export const editRecipe = (req, res) => {
   const errorHandler = handleErrors(res);
-  const userId = get("user._id", req);
   const { recipeId } = req.params;
   const {
     name,
@@ -121,7 +111,7 @@ export const editRecipe = (req, res) => {
     addToIngredientsList(ingredients);
   }
   Recipe.findByIdAndUpdate(recipeId, updatedRecipe, (err, recipe) => {
-    if (err) return res.status(500).send();
+    if (err) return errorHandler(500, "");
     if (!recipe) return errorHandler(500, "Something went wrong");
 
     return res.json({
@@ -133,8 +123,8 @@ export const editRecipe = (req, res) => {
 export const getRecipe = (req, res) => {
   const recipeId = get("params.recipeId")(req);
   Recipe.findById(recipeId, (err, recipe) => {
-    if (err) return res.status(500).send("Couldn't find that recipe");
-    if (!recipe) return res.status(404).send();
+    if (err) return handleErrors(res)(500, "Something went wrong.");
+    if (!recipe) return handleErrors(res)(404, "");
     return res.json(recipe);
   });
 };
@@ -158,7 +148,7 @@ export const getRecipes = (req, res) => {
           recipes
         });
       })
-      .catch(err => console.log(err));
+      .catch(_err => handleErrors(res)());
   });
 };
 
@@ -170,6 +160,35 @@ export const recipeOwnershipMiddleware = (req, res, next) => {
     if (recipe.author._id.equals(userId)) {
       return next();
     }
-    return res.status(403).send("You may not edit someone else's recipe");
+    return handleErrors(res)(403, "You may not edit someone else's recipe");
   });
+};
+
+export const likeRecipe = (req, res) => {
+  const likeByUser = pick(["_id", "screenName"])(req.user);
+
+  Recipe.findByIdAndUpdate(
+    req.params.recipeId,
+    { $addToSet: { likes: likeByUser } },
+    { new: true }
+  )
+    .then(recipe => {
+      if (!recipe) throw { status: 404, message: "Recipe not found" };
+
+      const likeByRecipe = pick(["_id", "name"])(recipe);
+
+      return User.findByIdAndUpdate(
+        req.user._id,
+        { $addToSet: { likes: likeByRecipe } },
+        { new: true }
+      );
+    })
+    .then(_user => res.json({ success: true }))
+    .catch(
+      err => err && handleErrors(res)(err.status || 500, err.message || "")
+    );
+};
+
+export const unlikeRecipe = (req, res) => {
+  res.send("dislike path");
 };

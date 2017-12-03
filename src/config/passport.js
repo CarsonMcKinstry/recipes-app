@@ -2,7 +2,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as jwtStrategy, ExtractJwt } from "passport-jwt";
 import User from "../models/user";
 
-import { now } from "moment";
+// import { now } from "moment";
 
 const jwtSecret = process.env.JWT_SECRET;
 

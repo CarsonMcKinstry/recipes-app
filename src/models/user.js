@@ -5,7 +5,16 @@ const userSchema = new Schema(
   {
     screenName: { type: String, required: true },
     email: { type: String, unique: true, lowercase: true },
-    password: String
+    password: String,
+    likes: {
+      type: [
+        {
+          _id: { type: Schema.ObjectId, unique: true },
+          screenName: String
+        }
+      ],
+      default: []
+    }
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );

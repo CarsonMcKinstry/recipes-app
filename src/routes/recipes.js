@@ -3,10 +3,12 @@ import {
   getRecipes,
   getRecipe,
   editRecipe,
-  recipeOwnershipMiddleware
+  recipeOwnershipMiddleware,
+  likeRecipe,
+  unlikeRecipe
 } from "../controllers/recipes";
 import { requireAuth } from "../helpers/passportHelper";
-import { celebrate, Joi } from "celebrate";
+import { celebrate } from "celebrate";
 import { Recipes } from "./validators";
 
 export default (app, passport) => {
@@ -23,4 +25,7 @@ export default (app, passport) => {
   );
   app.get("/recipes", getRecipesMiddleware, getRecipes);
   app.get("/recipes/:recipeId", getRecipe);
+
+  app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
+  app.put("/recipes/:recipeId/unlike", authMiddleware, unlikeRecipe);
 };

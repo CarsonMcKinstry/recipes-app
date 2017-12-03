@@ -56,6 +56,6 @@ export const registerUser = (req, res, next) => {
   });
 };
 
-export const login = (req, res, next) => {
+export const login = (req, res) => {
   res.send({ token: tokenFromUser(req.user) });
 };

@@ -13,6 +13,9 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
-    "no-unused-vars": ["error", { "args": { "all-except-prefixes": ["_"] } }]
+    "no-unused-vars": [
+      "error",
+      { "varsIgnorePattern": "^_.+", "argsIgnorePattern": "^_.+" }
+    ]
   }
 }
