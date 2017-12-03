@@ -5,7 +5,7 @@ import {
   editRecipe,
   recipeOwnershipMiddleware,
   likeRecipe,
-  unlikeRecipe
+  dislikeRecipe
 } from "../controllers/recipes";
 import { requireAuth } from "../helpers/passportHelper";
 import { celebrate } from "celebrate";
@@ -27,5 +27,5 @@ export default (app, passport) => {
   app.get("/recipes/:recipeId", getRecipe);
 
   app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
-  app.put("/recipes/:recipeId/unlike", authMiddleware, unlikeRecipe);
+  app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
 };

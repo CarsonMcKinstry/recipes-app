@@ -183,12 +183,30 @@ export const likeRecipe = (req, res) => {
         { new: true }
       );
     })
-    .then(_user => res.json({ success: true }))
+    .then(_user => res.json({ success: true, message: "liked recipe" }))
     .catch(
       err => err && handleErrors(res)(err.status || 500, err.message || "")
     );
 };
 
-export const unlikeRecipe = (req, res) => {
-  res.send("dislike path");
+export const dislikeRecipe = (req, res) => {
+  const likeByUser = pick(["_id", "screenName"])(req.user);
+
+  Recipe.findByIdAndUpdate(
+    req.params.recipeId,
+    { $pull: { likes: likeByUser } },
+    { new: true }
+  )
+    .then(recipe => {
+      if (!recipe) throw { status: 404, message: "Recipe not found" };
+      const likeByRecipe = pick(["_id", "name"])(recipe);
+
+      return User.findByIdAndUpdate(req.user._id, {
+        $pull: { likes: likeByRecipe }
+      });
+    })
+    .then(_user => res.json({ success: true, message: "disliked recipe" }))
+    .catch(
+      err => err && handleErrors(res)(err.status || 500, err.message || "")
+    );
 };

@@ -10,7 +10,7 @@ const userSchema = new Schema(
       type: [
         {
           _id: { type: Schema.ObjectId, unique: true },
-          screenName: String
+          name: String
         }
       ],
       default: []
