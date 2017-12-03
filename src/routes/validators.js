@@ -54,7 +54,9 @@ const recipesQuerySchema = {
   query: {
     q: Joi.string(),
     p: Joi.number(),
-    limit: Joi.number().valid([10, 25, 50])
+    limit: Joi.number().valid([10, 25, 50]),
+    active: Joi.boolean(),
+    userId: Joi.objectId()
   }
 };
 

@@ -17,15 +17,21 @@ export default (app, passport) => {
   const getRecipesMiddleware = celebrate(Recipes.recipesQuerySchema);
   const editRecipeMiddleware = celebrate(Recipes.editRecipeSchema);
 
+  // create
   app.post("/recipes", [authMiddleware, createRecipeMiddleware], createRecipe);
+
+  //read
+  app.get("/recipes", getRecipesMiddleware, getRecipes);
+  app.get("/recipes/:recipeId", getRecipe);
+
+  // update
   app.put(
     "/recipes/:recipeId",
     [authMiddleware, recipeOwnershipMiddleware, editRecipeMiddleware],
     editRecipe
   );
-  app.get("/recipes", getRecipesMiddleware, getRecipes);
-  app.get("/recipes/:recipeId", getRecipe);
-
   app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
   app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
+
+  // delete
 };

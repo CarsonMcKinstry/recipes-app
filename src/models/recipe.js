@@ -52,7 +52,8 @@ const recipeSchema = new Schema(
     averageRating: Number,
     displayImage: String,
     keywords: { type: [String], index: true },
-    tags: { type: [String], index: true }
+    tags: { type: [String], index: true },
+    isActive: { type: Boolean, default: true }
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );

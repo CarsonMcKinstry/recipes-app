@@ -37,12 +37,18 @@ const handleErrors = res => (status, message) => {
 };
 
 const castQuery = req => {
-  const { q } = req.query;
+  const { q, active, userId } = req.query;
   const query = {};
 
   if (q) {
     query.keywords = { $in: q.split("+") };
   }
+
+  if (userId) {
+    query.author._id = userId;
+  }
+
+  query.isActive = active === undefined ? true : active;
 
   return query;
 };
@@ -112,7 +118,8 @@ export const editRecipe = (req, res) => {
   }
   Recipe.findByIdAndUpdate(recipeId, updatedRecipe, (err, recipe) => {
     if (err) return errorHandler(500, "");
-    if (!recipe) return errorHandler(500, "Something went wrong");
+    if (!recipe || !recipe.isActive)
+      return errorHandler(500, "Something went wrong");
 
     return res.json({
       success: true
@@ -124,7 +131,7 @@ export const getRecipe = (req, res) => {
   const recipeId = get("params.recipeId")(req);
   Recipe.findById(recipeId, (err, recipe) => {
     if (err) return handleErrors(res)(500, "Something went wrong.");
-    if (!recipe) return handleErrors(res)(404, "");
+    if (!recipe || !recipe.isActive) return handleErrors(res)(404, "");
     return res.json(recipe);
   });
 };
@@ -134,7 +141,7 @@ export const getRecipes = (req, res) => {
 
   const query = castQuery(req);
 
-  Recipe.count({}, (err, total) => {
+  Recipe.count({ isActive: query.isActive }, (err, total) => {
     const checkPage = limit * p < total;
 
     Recipe.find(query)
@@ -160,6 +167,7 @@ export const recipeOwnershipMiddleware = (req, res, next) => {
     if (recipe.author._id.equals(userId)) {
       return next();
     }
+    if (!recipe) return handleErrors(res)(404, "Recipe not found");
     return handleErrors(res)(403, "You may not edit someone else's recipe");
   });
 };
