@@ -5,7 +5,8 @@ import {
   editRecipe,
   recipeOwnershipMiddleware,
   likeRecipe,
-  dislikeRecipe
+  dislikeRecipe,
+  removeRecipe
 } from "../controllers/recipes";
 import { requireAuth } from "../helpers/passportHelper";
 import { celebrate } from "celebrate";
@@ -34,4 +35,14 @@ export default (app, passport) => {
   app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
 
   // delete
+  app.delete(
+    "/recipes/:recipeId/delete",
+    [authMiddleware, recipeOwnershipMiddleware],
+    removeRecipe(false)
+  );
+  app.put(
+    "/recipes/:recipeId/undelete",
+    [authMiddleware, recipeOwnershipMiddleware],
+    removeRecipe(true)
+  );
 };

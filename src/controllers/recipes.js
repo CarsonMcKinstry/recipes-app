@@ -218,3 +218,20 @@ export const dislikeRecipe = (req, res) => {
       err => err && handleErrors(res)(err.status || 500, err.message || "")
     );
 };
+
+export const removeRecipe = removal => (req, res) => {
+  // expects one recipe
+  const recipeId = get("recipeId", req.params);
+
+  Recipe.findByIdAndUpdate(recipeId, { isActive: removal }, { new: true })
+    .then(recipe => {
+      res.json({
+        success: true,
+        message: removal
+          ? "Recipe moved to the trash"
+          : "Recipe taken out of the trash",
+        recipe
+      });
+    })
+    .catch(_err => handleErrors(res)(500));
+};
