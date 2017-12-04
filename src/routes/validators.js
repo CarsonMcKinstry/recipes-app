@@ -60,6 +60,10 @@ const recipesQuerySchema = {
   }
 };
 
+const deleteRecipeSchema = {
+  recipeId: Joi.objectId()
+};
+
 const userRegistrationSchema = {
   body: {
     screenName: Joi.string().required(),
@@ -73,7 +77,8 @@ const userRegistrationSchema = {
 export const Recipes = {
   createRecipeSchema,
   editRecipeSchema,
-  recipesQuerySchema
+  recipesQuerySchema,
+  deleteRecipeSchema
 };
 
 export const Users = {

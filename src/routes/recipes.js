@@ -17,6 +17,7 @@ export default (app, passport) => {
   const createRecipeMiddleware = celebrate(Recipes.createRecipeSchema);
   const getRecipesMiddleware = celebrate(Recipes.recipesQuerySchema);
   const editRecipeMiddleware = celebrate(Recipes.editRecipeSchema);
+  const deleteRecipeMiddleware = celebrate(Recipes.deleteRecipeSchema);
 
   // create
   app.post("/recipes", [authMiddleware, createRecipeMiddleware], createRecipe);
@@ -42,7 +43,7 @@ export default (app, passport) => {
   );
   app.put(
     "/recipes/:recipeId/undelete",
-    [authMiddleware, recipeOwnershipMiddleware],
+    [authMiddleware, recipeOwnershipMiddleware, deleteRecipeMiddleware],
     removeRecipe(true)
   );
 };
