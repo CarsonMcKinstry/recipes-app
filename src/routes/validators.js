@@ -61,7 +61,9 @@ const recipesQuerySchema = {
 };
 
 const deleteRecipeSchema = {
-  recipeId: Joi.objectId()
+  params: {
+    recipeId: Joi.objectId()
+  }
 };
 
 const userRegistrationSchema = {
