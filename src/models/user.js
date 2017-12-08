@@ -14,7 +14,8 @@ const userSchema = new Schema(
         }
       ],
       default: []
-    }
+    },
+    passwordReset: String
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );

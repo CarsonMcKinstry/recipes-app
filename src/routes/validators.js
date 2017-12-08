@@ -76,6 +76,21 @@ const userRegistrationSchema = {
   }
 };
 
+const passwordResetSchema = {
+  query: {
+    email: Joi.string()
+      .email()
+      .required()
+  }
+};
+
+const handleResetSchema = {
+  body: {
+    password: Joi.string().required(),
+    passwordConfirm: Joi.string().required()
+  }
+};
+
 export const Recipes = {
   createRecipeSchema,
   editRecipeSchema,
@@ -84,5 +99,7 @@ export const Recipes = {
 };
 
 export const Users = {
-  userRegistrationSchema
+  userRegistrationSchema,
+  passwordResetSchema,
+  handleResetSchema
 };

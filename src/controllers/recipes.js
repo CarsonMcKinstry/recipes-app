@@ -3,7 +3,6 @@ import User from "../models/user";
 import Ingredient from "../models/ingredient";
 import { pick, pipe, get, kebabCase, trim, map } from "lodash/fp";
 import keywordExtractor from "keyword-extractor";
-// import { isString } from "util";
 
 const extractorOptions = {
   language: "english",
