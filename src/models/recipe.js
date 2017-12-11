@@ -4,7 +4,7 @@ const recipeSchema = new Schema(
   {
     name: { type: String, required: true, maxlength: 60 },
     normalizedName: { type: String, index: true },
-    description: { type: String, maxlength: 140 },
+    description: { type: String, maxlength: 280 },
     author: {
       screenName: String,
       _id: Schema.Types.ObjectId
@@ -28,15 +28,14 @@ const recipeSchema = new Schema(
       ],
       required: true
     },
-    instructions: { type: [{ type: String, maxlength: 300 }], required: true },
+    instructions: { type: [{ type: String, maxlength: 1000 }], required: true },
     likes: {
       type: [
         {
           _id: { type: Schema.ObjectId, unique: true },
           screenName: String
         }
-      ],
-      default: []
+      ]
     },
     views: { type: Number, default: 0 },
     ratings: [

@@ -12,8 +12,7 @@ const userSchema = new Schema(
           _id: { type: Schema.ObjectId, unique: true },
           name: String
         }
-      ],
-      default: []
+      ]
     },
     passwordReset: String
   },
