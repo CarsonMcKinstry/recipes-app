@@ -20,11 +20,11 @@ Logs a user in. Return's the user's token.
 
 ---
 
-`POST /recipes`
+`POST /recipes/create`
 
 Creates a new recipe
 
-`GET /recipes`
+`GET /recipes/all`
 
 Gets all recipes. Can take a query string.
 
@@ -32,7 +32,7 @@ Gets all recipes. Can take a query string.
 
 Get a specific recipe.
 
-`PUT /recipes/:recipeId`
+`PUT /recipes/:recipeId/update`
 
 Edits a specific recipe.
 
