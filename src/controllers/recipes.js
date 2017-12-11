@@ -53,14 +53,11 @@ const castQuery = req => {
 };
 
 export const createRecipe = (req, res) => {
-  const {
-    name,
-    requiredTime,
-    ingredients,
-    instructions,
-    displayImage,
-    description
-  } = get("body")(req);
+  const photo = get("location", req.file);
+
+  const { name, requiredTime, ingredients, instructions, description } = get(
+    "body"
+  )(req);
   const user = pipe([get("user"), parseUser])(req);
   const recipe = new Recipe({
     name: trim(name),
@@ -69,7 +66,7 @@ export const createRecipe = (req, res) => {
     requiredTime,
     ingredients,
     instructions: map(trim)(instructions),
-    displayImage,
+    displayImage: photo || undefined,
     description,
     keywords: keywordExtractor.extract(name, extractorOptions)
   });
@@ -77,11 +74,14 @@ export const createRecipe = (req, res) => {
   addToIngredientsList(ingredients);
 
   recipe.save((err, recipe) => {
-    if (err || !recipe)
+    if (err || !recipe) {
+      console.log(err);
+
       return handleErrors(res)(
         500,
         "Something went wrong while saving your recipe"
       );
+    }
     return res.json(recipe);
   });
 };

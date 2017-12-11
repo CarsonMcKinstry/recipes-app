@@ -11,6 +11,7 @@ import {
 import { requireAuth } from "../helpers/passportHelper";
 import { celebrate } from "celebrate";
 import { Recipes } from "./validators";
+import { upload } from "../helpers/fileUpload";
 
 export default (app, passport) => {
   const authMiddleware = requireAuth(passport);
@@ -20,7 +21,11 @@ export default (app, passport) => {
   const deleteRecipeMiddleware = celebrate(Recipes.deleteRecipeSchema);
 
   // create
-  app.post("/recipes", [authMiddleware, createRecipeMiddleware], createRecipe);
+  app.post(
+    "/recipes",
+    [authMiddleware, upload.single("photo"), createRecipeMiddleware],
+    createRecipe
+  );
 
   //read
   app.get("/recipes", getRecipesMiddleware, getRecipes);
@@ -32,8 +37,8 @@ export default (app, passport) => {
     [authMiddleware, recipeOwnershipMiddleware, editRecipeMiddleware],
     editRecipe
   );
-  app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
-  app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
+  // app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
+  // app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
 
   // delete
   app.delete(
