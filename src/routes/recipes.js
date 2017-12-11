@@ -37,8 +37,8 @@ export default (app, passport) => {
     [authMiddleware, recipeOwnershipMiddleware, editRecipeMiddleware],
     editRecipe
   );
-  // app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
-  // app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
+  app.put("/recipes/:recipeId/like", authMiddleware, likeRecipe);
+  app.put("/recipes/:recipeId/dislike", authMiddleware, dislikeRecipe);
 
   // delete
   app.delete(
