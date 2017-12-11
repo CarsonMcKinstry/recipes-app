@@ -22,18 +22,18 @@ export default (app, passport) => {
 
   // create
   app.post(
-    "/recipes",
+    "/recipes/create",
     [authMiddleware, upload.single("photo"), createRecipeMiddleware],
     createRecipe
   );
 
   //read
-  app.get("/recipes", getRecipesMiddleware, getRecipes);
+  app.get("/recipes/all", getRecipesMiddleware, getRecipes);
   app.get("/recipes/:recipeId", getRecipe);
 
   // update
   app.put(
-    "/recipes/:recipeId",
+    "/recipes/:recipeId/update",
     [authMiddleware, recipeOwnershipMiddleware, editRecipeMiddleware],
     editRecipe
   );
