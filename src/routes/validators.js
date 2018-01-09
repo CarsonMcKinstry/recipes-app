@@ -70,6 +70,7 @@ const userRegistrationSchema = {
   body: {
     screenName: Joi.string().required(),
     password: Joi.string().required(),
+    passwordConfirm: Joi.string().required(),
     email: Joi.string()
       .email()
       .required()
