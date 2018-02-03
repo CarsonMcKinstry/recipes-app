@@ -6,10 +6,11 @@ import {
   recipeOwnershipMiddleware,
   likeRecipe,
   dislikeRecipe,
-  removeRecipe
+  removeRecipe,
+  getRandomRecipes
 } from "../controllers/recipes";
 import { requireAuth } from "../helpers/passportHelper";
-import { celebrate } from "celebrate";
+import { Joi, celebrate } from "celebrate";
 import { Recipes } from "./validators";
 import { upload } from "../helpers/fileUpload";
 
@@ -30,6 +31,11 @@ export default (app, passport) => {
   //read
   app.get("/recipes/all", getRecipesMiddleware, getRecipes);
   app.get("/recipes/:recipeId", getRecipe);
+  app.get(
+    "/recipes/random/:n",
+    celebrate({ params: { n: Joi.number().required() } }),
+    getRandomRecipes
+  );
 
   // update
   app.put(

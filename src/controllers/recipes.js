@@ -4,6 +4,8 @@ import Ingredient from "../models/ingredient";
 import { pick, pipe, get, kebabCase, trim, map } from "lodash/fp";
 import keywordExtractor from "keyword-extractor";
 
+// helpers
+
 const extractorOptions = {
   language: "english",
   remove_digits: true,
@@ -51,6 +53,8 @@ const castQuery = req => {
 
   return query;
 };
+
+// endpoint controllers
 
 export const createRecipe = (req, res) => {
   const photo = get("location", req.file);
@@ -156,6 +160,20 @@ export const getRecipes = (req, res) => {
       })
       .catch(_err => handleErrors(res)());
   });
+};
+
+export const getRandomRecipes = (req, res) => {
+  const { n } = req.params;
+
+  Recipe.aggregate({
+    $sample: { size: n }
+  })
+    .then(recipes => {
+      return res.json({
+        recipes
+      });
+    })
+    .catch(_err => handleErrors(res)());
 };
 
 export const recipeOwnershipMiddleware = (req, res, next) => {

@@ -21,7 +21,7 @@ const recipeSchema = new Schema(
           name: {
             type: String,
             required: true,
-            maxlength: 26,
+            maxlength: 60,
             index: true
           }
         }
